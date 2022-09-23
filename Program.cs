@@ -65,10 +65,35 @@ public static class Game
     }
 
     /// <summary>
+    /// Calculate on which index in the jagged array returned by the CalcMovesForAllCrabs()-
+    /// method to find the position with least total crab moves.
+    /// </summary>
+    /// <returns></returns>
+    private static int CalcBestPositionIdx()
+    {
+        int bestIdx = 0;
+        int bestSumYet = Int32.MaxValue;
+
+        int[][] allPositions = CalcMovesForAllCrabs();
+
+        for (int i = 0; i < allPositions.Length; i++)
+        {
+            int totalNoOfMoves = allPositions[i].Sum();
+            if (totalNoOfMoves < bestSumYet)
+            {
+                bestSumYet = totalNoOfMoves;
+                bestIdx = i;
+            }
+        }
+
+        return bestIdx;
+    }
+
+    /// <summary>
     /// Main method.
     /// </summary>
     public static void Main()
     {
-        CalcMovesForAllCrabs();
+        Console.WriteLine(CalcBestPositionIdx());
     }
 }
