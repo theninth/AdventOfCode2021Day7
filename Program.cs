@@ -11,8 +11,6 @@ public static class Game
         16, 1, 2, 0, 4, 2, 7, 1, 2, 14
     };
 
-
-
     /// <summary>
     /// Calculates number of moves between two positions.
     /// </summary>
@@ -21,6 +19,13 @@ public static class Game
     /// <returns>A positive (or zero) value of number of steps for that move.</returns>
     private static int CalcMovesToPos(int fromPos, int toPos) => Math.Abs(fromPos - toPos);
 
+    /// <summary>
+    /// Calculate number of moves for each of the crabs to get to the right position.
+    /// </summary>
+    /// <param name="toPos">Target position.</param>
+    /// <returns>
+    /// A array 
+    /// </returns>
     private static int[] CalcMovesForPos(int toPos)
     {
         int noOfCrabs = Positions.Count();
@@ -36,10 +41,40 @@ public static class Game
     }
 
     /// <summary>
+    /// Calculate moves for all crabs to all positions (from the position of the lowest
+    /// positioned crab to the highest positioned crab)
+    /// </summary>
+    /// <returns>
+    /// An multidemensional array where index 0 is the position of the lowest positioned crab, index 1
+    /// is the position of the lowest positioned crab + 1 and, index 2 is the position of the  lowest
+    /// positioned crab + 2 and so on. Each subarray is the number of moves each crab has to make to
+    /// reach that position.
+    /// </returns>
+    private static int[,] CalcMovesForAllCrabs()
+    {
+        int noOfCrabs = Positions.Count();
+        int noOfPossiblePositions = Positions.Max() - Positions.Min();
+        int[,] allPositions = new int[noOfPossiblePositions, noOfCrabs];
+
+        for (int i = 0; i < noOfPossiblePositions; i++)
+        {
+            int[] movesForPos = CalcMovesForPos(Positions.Min() + i);
+
+            for (int j = 0; j < movesForPos.Length; j++)
+            {
+                allPositions[i, j] = movesForPos[j];
+            }
+        }
+
+        return allPositions;
+    }
+
+    /// <summary>
     /// Main method.
     /// </summary>
     public static void Main()
     {
-        CalcMovesForPos(2).ToList().ForEach(i => Console.WriteLine(i.ToString()));
+        CalcMovesForAllCrabs();
+        //CalcMovesForPos(2).ToList().ForEach(i => Console.WriteLine(i.ToString()));
     }
 }
