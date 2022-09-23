@@ -50,20 +50,15 @@ public static class Game
     /// positioned crab + 2 and so on. Each subarray is the number of moves each crab has to make to
     /// reach that position.
     /// </returns>
-    private static int[,] CalcMovesForAllCrabs()
+    private static int[][] CalcMovesForAllCrabs()
     {
         int noOfCrabs = Positions.Count();
         int noOfPossiblePositions = Positions.Max() - Positions.Min();
-        int[,] allPositions = new int[noOfPossiblePositions, noOfCrabs];
+        int[][] allPositions = new int[noOfPossiblePositions][];
 
         for (int i = 0; i < noOfPossiblePositions; i++)
         {
-            int[] movesForPos = CalcMovesForPos(Positions.Min() + i);
-
-            for (int j = 0; j < movesForPos.Length; j++)
-            {
-                allPositions[i, j] = movesForPos[j];
-            }
+            allPositions[i] = CalcMovesForPos(Positions.Min() + i);
         }
 
         return allPositions;
@@ -75,6 +70,5 @@ public static class Game
     public static void Main()
     {
         CalcMovesForAllCrabs();
-        //CalcMovesForPos(2).ToList().ForEach(i => Console.WriteLine(i.ToString()));
     }
 }
