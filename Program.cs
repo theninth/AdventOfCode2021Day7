@@ -1,4 +1,5 @@
 ﻿// Niclas Nilsson, 2022
+// This program needs at least C# 7.0 for it's tuple syntax.
 
 namespace TheTreacheryOfWhales;
 
@@ -24,7 +25,8 @@ public static class Game
     /// </summary>
     /// <param name="toPos">Target position.</param>
     /// <returns>
-    /// A array 
+    /// An array where each element is number of moves for the crab with the same index in the
+    /// Position-list.
     /// </returns>
     private static int[] CalcMovesForPos(int toPos)
     {
@@ -41,52 +43,41 @@ public static class Game
     }
 
     /// <summary>
-    /// Calculate moves for all crabs to all positions (from the position of the lowest
-    /// positioned crab to the highest positioned crab)
+    /// Calculate best position and number of moves each crab has to make.
     /// </summary>
     /// <returns>
-    /// An multidemensional array where index 0 is the position of the lowest positioned crab, index 1
-    /// is the position of the lowest positioned crab + 1 and, index 2 is the position of the  lowest
-    /// positioned crab + 2 and so on. Each subarray is the number of moves each crab has to make to
-    /// reach that position.
+    /// A tuple with:
+    ///   - item1: Best position to move to.
+    ///   - item2: Moves for each crab to get there.
     /// </returns>
-    private static int[][] CalcMovesForAllCrabs()
+    private static (int, int[]) CalcBestPosition()
     {
-        int noOfCrabs = Positions.Count();
-        int noOfPossiblePositions = Positions.Max() - Positions.Min();
-        int[][] allPositions = new int[noOfPossiblePositions][];
+        // Creates an array for all reasonable positions. I.e. from the position of the
+        // lowest positioned crab to the highest positioned.
+        int[][] reasonablePositions = new int[Positions.Max() - Positions.Min()][];
 
-        for (int i = 0; i < noOfPossiblePositions; i++)
+        for (int i = 0; i < reasonablePositions.Length; i++)
         {
-            allPositions[i] = CalcMovesForPos(Positions.Min() + i);
+            reasonablePositions[i] = CalcMovesForPos(Positions.Min() + i);
         }
 
-        return allPositions;
-    }
+        // Find out which of those positions have the lowest number of crab moves.
+        int BestIdx = 0;
+        int bestSum = Int32.MaxValue;
 
-    /// <summary>
-    /// Calculate on which index in the jagged array returned by the CalcMovesForAllCrabs()-
-    /// method to find the position with least total crab moves.
-    /// </summary>
-    /// <returns></returns>
-    private static int CalcBestPositionIdx()
-    {
-        int bestIdx = 0;
-        int bestSumYet = Int32.MaxValue;
-
-        int[][] allPositions = CalcMovesForAllCrabs();
-
-        for (int i = 0; i < allPositions.Length; i++)
+        for (int i = 0; i < reasonablePositions.Length; i++)
         {
-            int totalNoOfMoves = allPositions[i].Sum();
-            if (totalNoOfMoves < bestSumYet)
+            int totalNoOfMoves = reasonablePositions[i].Sum();
+            if (totalNoOfMoves < bestSum)
             {
-                bestSumYet = totalNoOfMoves;
-                bestIdx = i;
+                bestSum = totalNoOfMoves;
+                BestIdx = i;
             }
         }
 
-        return bestIdx;
+        int bestPos = Positions.Min() + BestIdx;
+        int[] bestMoves = reasonablePositions[BestIdx];
+        return (bestPos, bestMoves);
     }
 
     /// <summary>
@@ -94,6 +85,6 @@ public static class Game
     /// </summary>
     public static void Main()
     {
-        Console.WriteLine(CalcBestPositionIdx());
+        (int bestPos, int[] bestMoves) = CalcBestPosition();
     }
 }
