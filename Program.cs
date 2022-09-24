@@ -18,7 +18,7 @@ public static class Game
     /// <param name="fromPos">Position A</param>
     /// <param name="toPos">Position B</param>
     /// <returns>A positive (or zero) value of number of steps for that move.</returns>
-    private static int CalcMovesToPos(int fromPos, int toPos) => Math.Abs(fromPos - toPos);
+    private static int CalcNoOfMovesToPos(int fromPos, int toPos) => Math.Abs(fromPos - toPos);
 
     /// <summary>
     /// Calculate number of moves for each of the crabs to get to the right position.
@@ -28,18 +28,18 @@ public static class Game
     /// An array where each element is number of moves for the crab with the same index in the
     /// Position-list.
     /// </returns>
-    private static int[] CalcMovesForPos(int toPos)
+    private static int[] CalcNoOfMovesForPos(int toPos)
     {
         int noOfCrabs = Positions.Count();
-        int[] moves = new int[noOfCrabs];
+        int[] noOfMoves = new int[noOfCrabs];
 
         for (int crabIdx = 0; crabIdx < noOfCrabs; crabIdx++)
         {
             int fromPos = Positions[crabIdx];
-            moves[crabIdx] = CalcMovesToPos(fromPos, toPos);
+            noOfMoves[crabIdx] = CalcNoOfMovesToPos(fromPos, toPos);
         }
 
-        return moves;
+        return noOfMoves;
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public static class Game
 
         for (int i = 0; i < reasonablePositions.Length; i++)
         {
-            reasonablePositions[i] = CalcMovesForPos(Positions.Min() + i);
+            reasonablePositions[i] = CalcNoOfMovesForPos(Positions.Min() + i);
         }
 
         // Find out which of those positions have the lowest number of crab moves.
