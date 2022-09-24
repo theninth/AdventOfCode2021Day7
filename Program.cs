@@ -80,11 +80,25 @@ public static class Game
         return (bestPos, bestMoves);
     }
 
+    private static void OutputToScreen(int targetPos, int[] noOfMoves)
+    {
+        Console.WriteLine($"Best position:      {targetPos, 3}");
+        Console.WriteLine($"Total fuels needed: {noOfMoves.Sum(), 3}");
+        Console.WriteLine();
+
+        for (int i = 0; i < noOfMoves.Length; i++)
+        {
+            Console.WriteLine($"  - Move from {Positions[i]} to {targetPos}: {noOfMoves[i]} fuel");
+        }
+        
+    }
+
     /// <summary>
     /// Main method.
     /// </summary>
     public static void Main()
     {
         (int bestPos, int[] bestMoves) = CalcBestPosition();
+        OutputToScreen(bestPos, bestMoves);
     }
 }
