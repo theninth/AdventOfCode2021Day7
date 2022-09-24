@@ -52,7 +52,7 @@ public static class Game
     {
         // Creates an array for all reasonable positions. I.e. from the position of the
         // lowest positioned crab to the highest positioned.
-        int[][] reasonablePositions = new int[Positions.Max() - Positions.Min()][];
+        int[][] reasonablePositions = new int[Positions.Max() - Positions.Min() + 1][];
 
         for (int i = 0; i < reasonablePositions.Length; i++)
         {
@@ -92,9 +92,9 @@ public static class Game
 
             if (input == null || input.Trim() == String.Empty)
             {
-                if (count == 1)
+                if (count <= 2)
                 {
-                    Console.WriteLine("You have to enter at least one valid position!");
+                    Console.WriteLine("You have to enter at least two valid positions!");
                     Console.WriteLine();
                     continue;
                 }
