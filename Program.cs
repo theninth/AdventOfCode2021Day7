@@ -27,9 +27,9 @@ public static class Program
     /// <param name="toPos">Target position.</param>
     /// <returns>
     /// An array where each element is number of moves for the crab with the same index in the
-    /// Position-list.
+    /// Crabs-list.
     /// </returns>
-    private static int[] CalcNoOfMovesForPos(int toPos)
+    private static int[] CalcNoOfMovesForCrabs(int toPos)
     {
         int noOfCrabs = Crabs.Count();
         int[] noOfMoves = new int[noOfCrabs];
@@ -55,11 +55,14 @@ public static class Program
     {
         // Creates an array for all reasonable positions. I.e. from the position of the
         // lowest positioned crab to the highest positioned.
+        // The array will have the form of {{a, b, c ...}, {a, b, c ...}, {a, b, c ...}}
+        // where each sub array represents a position on the horizontal axis and each
+        // letter is how many moves the crab of that index needs to take.
         int[][] reasonablePositions = new int[Crabs.Max() - Crabs.Min() + 1][];
 
         for (int i = 0; i < reasonablePositions.Length; i++)
         {
-            reasonablePositions[i] = CalcNoOfMovesForPos(Crabs.Min() + i);
+            reasonablePositions[i] = CalcNoOfMovesForCrabs(Crabs.Min() + i);
         }
 
         // Find out which of those positions have the lowest number of crab moves.
@@ -82,7 +85,7 @@ public static class Program
     }
 
     /// <summary>
-    /// Make user input crab positions and add those to the Positions list.
+    /// Make user input crab positions and add those to the Crab-list.
     /// </summary>
     private static void InputData()
     {
