@@ -8,9 +8,7 @@ namespace TheTreacheryOfWhales;
 /// </summary>
 public static class Game
 {
-    private static readonly List<Int32> Positions = new() {
-        16, 1, 2, 0, 4, 2, 7, 1, 2, 14
-    };
+    private static readonly List<Int32> Positions = new();
 
     /// <summary>
     /// Calculates number of moves between two positions.
@@ -80,8 +78,49 @@ public static class Game
         return (bestPos, bestMoves);
     }
 
+    /// <summary>
+    /// Make user input crab positions and add those to the Positions list.
+    /// </summary>
+    private static void InputData()
+    {
+        int count = 1;
+
+        while (true)
+        {
+            Console.Write($"The original position of crab {count} (just press enter when no more crabs to input): ");
+            string? input = Console.ReadLine();
+
+            if (input == null || input.Trim() == String.Empty)
+            {
+                if (count == 1)
+                {
+                    Console.WriteLine("You have to enter at least one valid position!");
+                    Console.WriteLine();
+                    continue;
+                }
+                return;
+            }
+            
+            if (int.TryParse(input.Trim(), out int origPos))
+            {
+                Positions.Add(origPos);
+                count++;
+            }
+            else
+            {
+                Console.WriteLine("Error: Not a valid value.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Outputs data to screen.
+    /// </summary>
+    /// <param name="targetPos">Target position.</param>
+    /// <param name="noOfMoves">Array with each crabs number of moves to get to target.</param>
     private static void OutputToScreen(int targetPos, int[] noOfMoves)
     {
+        Console.WriteLine();
         Console.WriteLine($"Best position:      {targetPos, 3}");
         Console.WriteLine($"Total fuels needed: {noOfMoves.Sum(), 3}");
         Console.WriteLine();
@@ -98,7 +137,10 @@ public static class Game
     /// </summary>
     public static void Main()
     {
+        InputData();
         (int bestPos, int[] bestMoves) = CalcBestPosition();
         OutputToScreen(bestPos, bestMoves);
+
+        Console.ReadLine();
     }
 }
