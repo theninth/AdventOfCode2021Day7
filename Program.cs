@@ -1,9 +1,7 @@
 ﻿// Niclas Nilsson, 2022
 // This program needs at least C# 7.0 for it's tuple syntax.
 
-using System.Runtime.CompilerServices;
-
-namespace TheTreacheryOfWhales;
+namespace AdventOfCode2021Day7;
 
 /// <summary>
 /// Main class of project.
@@ -21,22 +19,44 @@ public static class Program
     private static readonly List<Int32> Crabs = new();
 
     /// <summary>
-    /// Calculates number of moves between two positions.
+    /// Calculates fuel needed to move between two positions.
+    /// Used  because of different algorithm in part 1 and part 2.
     /// </summary>
     /// <param name="fromPos">Position A</param>
     /// <param name="toPos">Position B</param>
-    /// <returns>A positive (or zero) value of number of steps for that move.</returns>
-    private static int CalcFuelToPos(int fromPos, int toPos) => Math.Abs(fromPos - toPos);
+    /// <returns>A positive (or zero) value of fuel needed for that move.</returns>
+    public delegate int FuelCalculator(int fromPos, int toPos);
+
+    /// <summary>
+    /// Calculates fuel needed to move between two positions for part 1 of assignment.
+    /// </summary>
+    /// <param name="fromPos">Position A</param>
+    /// <param name="toPos">Position B</param>
+    /// <returns>A positive (or zero) value of fuel needed for that move.</returns>
+    private static int CalcFuelToPosPart1(int fromPos, int toPos) => Math.Abs(fromPos - toPos);
+
+    /// <summary>
+    /// Calculates fuel needed to move between two positions for part 2 of assignment.
+    /// </summary>
+    /// <param name="fromPos">Position A</param>
+    /// <param name="toPos">Position B</param>
+    /// <returns>A positive (or zero) value of fuel needed for that move.</returns>
+    private static int CalcFuelToPosPart2(int fromPos, int toPos)
+    {
+        int noOfMoves = Math.Abs(fromPos - toPos);
+        return noOfMoves * (noOfMoves + 1) / 2;
+    }
 
     /// <summary>
     /// Calculate number of moves for each of the crabs to get to the right position.
     /// </summary>
     /// <param name="toPos">Target position.</param>
+    /// <param name="fuelCalculator">Algorithm to calculate fuel needed between two </param>
     /// <returns>
     /// An array where each element is number of moves for the crab with the same index in the
     /// Crabs-list.
     /// </returns>
-    private static int[] CalcNoOfMovesForCrabs(int toPos)
+    private static int[] CalcNoOfMovesForCrabs(int toPos, FuelCalculator fuelCalculator)
     {
         int noOfCrabs = Crabs.Count();
         int[] noOfMoves = new int[noOfCrabs];
@@ -44,7 +64,7 @@ public static class Program
         for (int crabIdx = 0; crabIdx < noOfCrabs; crabIdx++)
         {
             int fromPos = Crabs[crabIdx];
-            noOfMoves[crabIdx] = CalcFuelToPos(fromPos, toPos);
+            noOfMoves[crabIdx] = fuelCalculator(fromPos, toPos);
         }
 
         return noOfMoves;
@@ -58,7 +78,7 @@ public static class Program
     ///   - item1: Best position to move to.
     ///   - item2: Moves for each crab to get there.
     /// </returns>
-    private static (int, int[]) CalcBestPosition()
+    private static (int, int[]) CalcBestPosition(FuelCalculator fuelCalculator)
     {
         // Creates an array for all reasonable positions. I.e. from the position of the
         // lowest positioned crab to the highest positioned.
@@ -69,7 +89,7 @@ public static class Program
 
         for (int i = 0; i < reasonablePositions.Length; i++)
         {
-            reasonablePositions[i] = CalcNoOfMovesForCrabs(Crabs.Min() + i);
+            reasonablePositions[i] = CalcNoOfMovesForCrabs(Crabs.Min() + i, fuelCalculator);
         }
 
         // Find out which of those positions have the lowest number of crab moves.
@@ -143,7 +163,8 @@ public static class Program
         bool verbose = args.Contains("--verbose");
 
         InputData();
-        (int bestPos, int[] bestMoves) = CalcBestPosition();
+        (int bestPos, int[] bestMoves) = CalcBestPosition(CalcFuelToPosPart1);
+        // (int bestPos, int[] bestMoves) = CalcBestPosition(CalcFuelToPosPart2);
         OutputToScreen(bestPos, bestMoves, verbose);
 
         Console.ReadLine();
