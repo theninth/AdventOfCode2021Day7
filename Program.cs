@@ -89,16 +89,14 @@ public static class Program
     /// </summary>
     private static void InputData()
     {
-        int count = 1;
-
         while (true)
         {
-            Console.Write($"The original position of crab {count} (just press enter when no more crabs to input): ");
+            Console.Write($"The original position of crab {Crabs.Count() + 1} (just press enter when no more crabs to input): ");
             string? input = Console.ReadLine();
 
             if (input == null || input.Trim() == string.Empty)
             {
-                if (count <= 2)
+                if (Crabs.Count() < 2)
                 {
                     Console.WriteLine("You have to enter at least two valid positions!");
                     Console.WriteLine();
@@ -110,7 +108,6 @@ public static class Program
             if (int.TryParse(input.Trim(), out int origPos))
             {
                 Crabs.Add(origPos);
-                count++;
             }
             else
             {
