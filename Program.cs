@@ -1,6 +1,8 @@
 ﻿// Niclas Nilsson, 2022
 // This program needs at least C# 7.0 for it's tuple syntax.
 
+using System.Runtime.CompilerServices;
+
 namespace TheTreacheryOfWhales;
 
 /// <summary>
@@ -8,6 +10,11 @@ namespace TheTreacheryOfWhales;
 /// </summary>
 public static class Program
 {
+    /// <summary>
+    /// Filename of datafile.
+    /// </summary>
+    private const string DataFile = "SampleData.txt";
+
     /// <summary>
     /// A list where each item is a crab and the value it is initial horizontal position.
     /// </summary>
@@ -19,7 +26,7 @@ public static class Program
     /// <param name="fromPos">Position A</param>
     /// <param name="toPos">Position B</param>
     /// <returns>A positive (or zero) value of number of steps for that move.</returns>
-    private static int CalcNoOfMovesToPos(int fromPos, int toPos) => Math.Abs(fromPos - toPos);
+    private static int CalcFuelToPos(int fromPos, int toPos) => Math.Abs(fromPos - toPos);
 
     /// <summary>
     /// Calculate number of moves for each of the crabs to get to the right position.
@@ -37,7 +44,7 @@ public static class Program
         for (int crabIdx = 0; crabIdx < noOfCrabs; crabIdx++)
         {
             int fromPos = Crabs[crabIdx];
-            noOfMoves[crabIdx] = CalcNoOfMovesToPos(fromPos, toPos);
+            noOfMoves[crabIdx] = CalcFuelToPos(fromPos, toPos);
         }
 
         return noOfMoves;
@@ -85,33 +92,22 @@ public static class Program
     }
 
     /// <summary>
-    /// Make user input crab positions and add those to the Crab-list.
+    /// Read in values from datafile supplied with assignment (might not be the same as original).
     /// </summary>
     private static void InputData()
     {
-        while (true)
-        {
-            Console.Write($"The original position of crab {Crabs.Count() + 1} (just press enter when no more crabs to input): ");
-            string? input = Console.ReadLine();
+        // Really quick and ugly way to read data file.
+        string textValues = File.ReadAllText(DataFile).Trim('{').Trim('}');
 
-            if (input == null || input.Trim() == string.Empty)
+        foreach (string textValue in textValues.Split(','))
+        {
+            if (int.TryParse(textValue.Trim(), out int number))
             {
-                if (Crabs.Count() < 2)
-                {
-                    Console.WriteLine("You have to enter at least two valid positions!");
-                    Console.WriteLine();
-                    continue;
-                }
-                return;
-            }
-            
-            if (int.TryParse(input.Trim(), out int origPos))
-            {
-                Crabs.Add(origPos);
+                Crabs.Add(number);
             }
             else
             {
-                Console.WriteLine("Error: Not a valid value.");
+                Console.WriteLine($"Error: Could not parse value \"{textValue.Trim()}\"");
             }
         }
     }
@@ -121,28 +117,34 @@ public static class Program
     /// </summary>
     /// <param name="targetPos">Target position.</param>
     /// <param name="noOfMoves">Array with each crabs number of moves to get to target.</param>
-    private static void OutputToScreen(int targetPos, int[] noOfMoves)
+    /// <param name="verbose">If each move should be outputted</param>
+    private static void OutputToScreen(int targetPos, int[] noOfMoves, bool verbose=false)
     {
-        Console.WriteLine();
-        Console.WriteLine($"Best position:      {targetPos, 3}");
-        Console.WriteLine($"Total fuels needed: {noOfMoves.Sum(), 3}");
-        Console.WriteLine();
-
-        for (int i = 0; i < noOfMoves.Length; i++)
+        if (verbose)
         {
-            Console.WriteLine($"  - Move from {Crabs[i]} to {targetPos}: {noOfMoves[i]} fuel");
+            Console.WriteLine();
+            for (int i = 0; i < noOfMoves.Length; i++)
+            {
+                Console.WriteLine($"  - Move from {Crabs[i]} to {targetPos}: {noOfMoves[i]} fuel");
+            }
         }
-        
+
+        Console.WriteLine();
+        Console.WriteLine($"Best position:      {targetPos,3}");
+        Console.WriteLine($"Total fuels needed: {noOfMoves.Sum(),3}");
+        Console.WriteLine();
     }
 
     /// <summary>
     /// Main method.
     /// </summary>
-    public static void Main()
+    public static void Main(string[] args)
     {
+        bool verbose = args.Contains("--verbose");
+
         InputData();
         (int bestPos, int[] bestMoves) = CalcBestPosition();
-        OutputToScreen(bestPos, bestMoves);
+        OutputToScreen(bestPos, bestMoves, verbose);
 
         Console.ReadLine();
     }
