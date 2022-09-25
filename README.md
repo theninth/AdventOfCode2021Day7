@@ -18,5 +18,5 @@ annan möjlig tolkning är förstås läsning från fil.
  
 I och med att detta också testade "Multi dimensionell data hantering" så valde jag en implementation som 
 samlade alla positionsändringarna varje krabba behövde göra för varje position i en stor multi dimensionell
-array. Det bör finnas bättre implementationer exempelvis genom att räkna på genomsnitt. Min implementation
-tar upp mycket minne med stora skillnader mellan de olika positionerna och ett stort antal krabbor.
+array. Min implementation tar upp mycket minne om det finns stora skillnader mellan de olika positionerna
+och ett stort antal krabbor.
